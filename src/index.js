@@ -1,4 +1,5 @@
 // index.js
+const arr2 = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 
 const node = (data = null, left = null, right = null) => {
   return { data, left, right };
@@ -16,7 +17,47 @@ const tree = (arr) => {
     }
     oldData = val;
   };
-  return { dataTree, insert };
+  const del = (root, val) => {
+    if (!root) return null;
+
+    function handleDeletion(node, side) {
+      let currNode = node;
+      let prevNode = currNode;
+
+      if (side) {
+        // leafs
+        let nextNode = currNode[side];
+        if (nextNode && val == nextNode.data) {
+          if (!nextNode.left && !nextNode.right) {
+            currNode[side] = null;
+            return;
+          }
+        }
+      } else if (
+        currNode.data === val &&
+        !!currNode.left !== !!currNode.right
+      ) {
+        // single child
+        prevNode = Boolean(currNode.left) ? currNode.left : currNode.right;
+        return prevNode;
+      } else {
+        return;
+      }
+    }
+
+    if (val < root.data) {
+      root.left = del(root.left, val);
+      handleDeletion(root, "left");
+    } else if (val > root.data) {
+      root.right = del(root.right, val);
+      handleDeletion(root, "right");
+    } else if (val === root.data) {
+      root = handleDeletion(root);
+    }
+
+    return root;
+  };
+  return { root, insert, del };
 };
 
 const buildTree = (arr) => {
@@ -31,3 +72,15 @@ const buildTree = (arr) => {
   newNode.right = buildTree(sortedArr.slice(mid + 1));
   return newNode;
 };
+
+// Testing
+console.log(`  `);
+const myTree2 = tree(arr2);
+console.log(prettyPrint(myTree2.root));
+myTree2.insert(myTree2.root, 67);
+myTree2.insert(myTree2.root, 34);
+myTree2.insert(myTree2.root, 90);
+myTree2.insert(myTree2.root, 36);
+console.log(prettyPrint(myTree2.root));
+myTree2.del(myTree2.root, 36);
+console.log(prettyPrint(myTree2.root));
