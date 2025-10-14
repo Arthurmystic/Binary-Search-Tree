@@ -20,43 +20,44 @@ const tree = (arr) => {
   const del = (root, val) => {
     if (!root) return null;
 
-    function handleDeletion(node, side) {
-      let currNode = node;
-      let prevNode = currNode;
-
-      if (side) {
-        // leafs
-        let nextNode = currNode[side];
-        if (nextNode && val == nextNode.data) {
-          if (!nextNode.left && !nextNode.right) {
-            currNode[side] = null;
-            return;
-          }
-        }
-      } else if (
-        currNode.data === val &&
-        !!currNode.left !== !!currNode.right
+    function deleteIfIsLeaf(node, side) {
+      let nextNode = node[side];
+      if (
+        nextNode &&
+        val == nextNode.data &&
+        !nextNode.left &&
+        !nextNode.right
       ) {
-        // single child
-        prevNode = Boolean(currNode.left) ? currNode.left : currNode.right;
-        return prevNode;
-      } else {
-        return;
+        node[side] = null;
       }
     }
 
+    function deleteIfNotLeaf(node, side) {
+      let currNode = node;
+      if (currNode.data === val && !!currNode.left !== !!currNode.right) {
+        currNode = !!currNode.left ? currNode.left : currNode.right;
+        return currNode;
+      } else return;
+    }
+
+    let rootSide;
     if (val < root.data) {
       root.left = del(root.left, val);
-      handleDeletion(root, "left");
+      rootSide = "left";
     } else if (val > root.data) {
       root.right = del(root.right, val);
-      handleDeletion(root, "right");
-    } else if (val === root.data) {
-      root = handleDeletion(root);
+      rootSide = "right";
+    } else rootSide = null;
+
+    if (rootSide) {
+      deleteIfIsLeaf(root, rootSide);
+    } else {
+      if (!!root.left !== !!root.right) root = deleteIfNotLeaf(root);
     }
 
     return root;
   };
+
   return { root, insert, del };
 };
 
