@@ -20,24 +20,23 @@ const tree = (arr) => {
   const del = (root, val) => {
     if (!root) return null;
 
-    function deleteIfIsLeaf(node, side) {
-      let nextNode = node[side];
-      if (
-        nextNode &&
-        val == nextNode.data &&
-        !nextNode.left &&
-        !nextNode.right
-      ) {
-        node[side] = null;
-      }
-    }
+    const isLeaf = (node, side) =>
+      node[side] &&
+      val == node[side].data &&
+      !node[side].left &&
+      !node[side].right;
 
-    function deleteIfNotLeaf(node, side) {
-      let currNode = node;
-      if (currNode.data === val && !!currNode.left !== !!currNode.right) {
-        currNode = !!currNode.left ? currNode.left : currNode.right;
-        return currNode;
-      } else return;
+    function deleteIfNotLeaf(node) {
+      const isSingleChild = node.data === val && !!node.left !== !!node.right;
+      const hasTwoChildren = node.data === val && node.left && node.right;
+      if (isSingleChild) {
+        node = !!node.left ? node.left : node.right; // skip currNode
+        return node;
+      }
+      if (hasTwoChildren) {
+        // placeholder for handling 2 children later
+      }
+      return;
     }
 
     let rootSide;
@@ -50,7 +49,7 @@ const tree = (arr) => {
     } else rootSide = null;
 
     if (rootSide) {
-      deleteIfIsLeaf(root, rootSide);
+      if (isLeaf(root, rootSide)) root[rootSide] = null;
     } else {
       if (!!root.left !== !!root.right) root = deleteIfNotLeaf(root);
     }
