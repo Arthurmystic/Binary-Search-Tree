@@ -20,43 +20,63 @@ const tree = (arr) => {
   const del = (root, val) => {
     if (!root) return null;
 
+    const isChildLeaf = (parent, child) =>
+      child && val == child.data && !child.left && !child.right;
+
     const isLeaf = (node, side) =>
       node[side] &&
       val == node[side].data &&
       !node[side].left &&
       !node[side].right;
 
+    const isSingleChild = (node) =>
+      node.data === val && !!node.left !== !!node.right;
+
+    const hasTwoChildren = node.data === val && node.left && node.right;
+
+    function deleteSingleChild(node) {
+      node = !!node.left ? node.left : node.right; // skip currNode
+      return node;
+    }
+
+    function deleteLeaf(parent, side) {
+      parent[side] = null;
+    }
+
     function deleteIfNotLeaf(node) {
-      const isSingleChild = node.data === val && !!node.left !== !!node.right;
-      const hasTwoChildren = node.data === val && node.left && node.right;
-      if (isSingleChild) {
-        node = !!node.left ? node.left : node.right; // skip currNode
-        return node;
-      }
       if (hasTwoChildren) {
-        // placeholder for handling 2 children later
-      }
-      return;
+        // if (isLeaf(node,'right')){
+        //   const leafData = node.right.data
+        //   deleteLeaf(node,'right')
+        // }
+      } else return;
     }
 
     let rootSide;
     if (val < root.data) {
+      // console.log('rooot.ddddaaaat: ', root.data)
       root.left = del(root.left, val);
       rootSide = "left";
     } else if (val > root.data) {
+      // console.log('rooot.ddddaaaat: ', root.data)
       root.right = del(root.right, val);
+      // console.log('rooot.ddddaaaat: ', root.data)
       rootSide = "right";
     } else rootSide = null;
 
     if (rootSide) {
-      if (isLeaf(root, rootSide)) root[rootSide] = null;
+      let child = root[rootSide];
+      if (isChildLeaf(root, child)) deleteLeaf(root, rootSide); // root[rootSide] = null
+
+      // if(isLeaf(root,rootSide)) deleteLeaf(root,rootSide)// root[rootSide] = null
     } else {
-      if (!!root.left !== !!root.right) root = deleteIfNotLeaf(root);
+      // Single child node !!check Boolean deleteSingleChild(node)
+      if (isSingleChild(root)) root = deleteSingleChild(root);
+      // if (!!root.left !== !!root.right ) root = deleteIfNotLeaf(root)
     }
 
     return root;
   };
-
   return { root, insert, del };
 };
 
