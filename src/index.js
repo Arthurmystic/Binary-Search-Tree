@@ -1,3 +1,5 @@
+import prettyPrint from "./prettyPrint.js";
+
 const arr1 = [500, 10, 20, 30, 100, 40];
 // const arr2 = [500,10,20,30,100]
 const arr2 = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
@@ -18,52 +20,15 @@ const tree = (arr) => {
 
   const del = (root, val) => {
     if (!root) return null;
-
-    const isLeaf = (node) => {
-      return node && !node.left && !node.right;
-    };
-
-    // const isLeaf=(node,side)=>node[side] && (val==node[side].data) && !node[side].left && !node[side].right
-
-    const hasOneChild = (node) => !!node.left !== !!node.right;
-
-    const hasTwoChildren = (node) => node.left && node.right;
-
-    const deleteOneChildNode = (node) => {
-      node = node.left ? node.left : node.right; // skip currNode
-      return node;
-    };
-
-    const deleteLeaf = (parent, side) => {
-      parent[side] = null;
-    };
-
-    function promoteRightLeaf(node) {
-      const leafData = node.right.data;
-      deleteLeaf(node, "right"); // del right coz right has the bigger val which will replace the parent
-      node.data = leafData; //update node.data
-      return node;
-    }
-
-    function promoteLeftmostFromRight(node) {
-      const rightChild = node.right;
-      if (!rightChild.left) return;
-      let leftChild = rightChild.left;
-      let prevNode = rightChild;
-      while (leftChild.left) {
-        // check if leftchild of rightchild had
-        prevNode = leftChild; //
-        leftChild = leftChild.left;
-      }
-      let nodedata = leftChild.data;
-      prevNode.left = leftChild.right; // the .left is already null - this is reassigning which implicitly updates the left leg. no nid 2 del.
-      return nodedata;
-    }
-
     let rootSide;
 
+    const isLeaf = (node) => node && !node.left && !node.right;
+    const hasOneChild = (node) => !!node.left !== !!node.right;
+    const hasTwoChildren = (node) => node.left && node.right;
+    const deleteOneChildNode = (node) => (node.left ? node.left : node.right); // skip currNode n retirn next left or right node;
+    const deleteLeaf = (parent, side) => (parent[side] = null);
+
     if (val < root.data) {
-      // console.log('rooot.ddddaaaat: ', root.data)
       root.left = del(root.left, val);
       rootSide = "left";
     } else if (val > root.data) {
@@ -77,24 +42,45 @@ const tree = (arr) => {
       let child = root[rootSide];
       if (child && val == child.data && isLeaf(child))
         deleteLeaf(root, rootSide); //
-    } else {
-      if (hasOneChild(root)) {
-        root = deleteOneChildNode(root);
-      } else if (hasTwoChildren(root)) {
-        // --- Case 1: right child is a leaf ---
-        if (isLeaf(root.right)) {
-          root = promoteRightLeaf(root);
+    } else if (hasOneChild(root)) {
+      root = deleteOneChildNode(root);
 
-          // --- Case 2: right child has no left child (simple right promotion) ---
-        } else if (hasOneChild(root.right) && !root.right.left) {
-          root.data = root.right.data;
-          root.right = root.right.right;
+      // two child cases
+    } else if (hasTwoChildren(root)) {
+      // --- Case 1: right child is a leaf ---
+      if (isLeaf(root.right)) {
+        root = promoteRightLeaf(root);
 
-          // --- Case 3: all other two-child variations ---
-        } else {
-          root.data = promoteLeftmostFromRight(root);
-        }
+        // --- Case 2: right child has no left child (simple right promotion) ---
+      } else if (hasOneChild(root.right) && !root.right.left) {
+        root.data = root.right.data;
+        root.right = root.right.right;
+
+        // --- Case 3: all other two-child variations ---
+      } else {
+        root.data = promoteLeftmostFromRight(root);
       }
+    }
+
+    function promoteRightLeaf(node) {
+      const leafData = node.right.data;
+      deleteLeaf(node, "right"); // del right coz right has the bigger val which will replace the parent
+      node.data = leafData; //update node.data
+      return node;
+    }
+    function promoteLeftmostFromRight(node) {
+      const rightChild = node.right;
+      if (!rightChild.left) return;
+      let leftChild = rightChild.left;
+      let prevNode = rightChild;
+      while (leftChild.left) {
+        // check if leftchild of rightchild had
+        prevNode = leftChild; //
+        leftChild = leftChild.left;
+      }
+      let nodedata = leftChild.data;
+      prevNode.left = leftChild.right; // the .left is already null - this is reassigning which implicitly updates the left leg. no nid 2 del.
+      return nodedata;
     }
 
     return root;
@@ -116,18 +102,6 @@ const buildTree = (arr) => {
   return newNode;
 };
 
-const prettyPrint = (node, prefix = "", isLeft = true) => {
-  if (node === null) {
-    return;
-  }
-  if (node.right !== null) {
-    prettyPrint(node.right, `${prefix}${isLeft ? "│   " : "    "}`, false);
-  }
-  console.log(`${prefix}${isLeft ? "└── " : "┌── "}${node.data}`);
-  if (node.left !== null) {
-    prettyPrint(node.left, `${prefix}${isLeft ? "    " : "│   "}`, true);
-  }
-};
 console.log(`  `);
 // const myTree = tree(arr1);
 const myTree2 = tree(arr2);
