@@ -38,35 +38,26 @@ const tree = (arr) => {
       parent[side] = null;
     };
 
-    function deleteTwoChildNode(node) {
+    function promoteRightLeaf(node) {
+      const leafData = node.right.data;
+      deleteLeaf(node, "right"); // del right coz right has the bigger val which will replace the parent
+      node.data = leafData; //update node.data
+      return node;
+    }
+
+    function promoteLeftmostFromRight(node) {
       const rightChild = node.right;
-      if (isLeaf(rightChild)) {
-        const leafData = node.right.data;
-        deleteLeaf(node, "right"); // del right coz right has the bigger val which will replace the parent
-        node.data = leafData; //update node.data
-
-        return node;
-      } else {
-        return traverseRight(rightChild);
-
-        function traverseRight(rightNode) {
-          if (rightNode.left) {
-            let leftChild = rightNode.left;
-            let prevNode = rightNode;
-            while (leftChild.left) {
-              // check if leftchild of rightchild had
-              prevNode = leftChild; //
-              leftChild = leftChild.left;
-            }
-            let nodedata = leftChild.data;
-            prevNode.left = leftChild.right; // the .left is already null - this is reassigning which implicitly updates the left leg. no nid 2 del.
-            return nodedata;
-          } else if (!rightNode.left) {
-            return;
-          }
-        }
+      if (!rightChild.left) return;
+      let leftChild = rightChild.left;
+      let prevNode = rightChild;
+      while (leftChild.left) {
+        // check if leftchild of rightchild had
+        prevNode = leftChild; //
+        leftChild = leftChild.left;
       }
-      return;
+      let nodedata = leftChild.data;
+      prevNode.left = leftChild.right; // the .left is already null - this is reassigning which implicitly updates the left leg. no nid 2 del.
+      return nodedata;
     }
 
     let rootSide;
@@ -87,38 +78,25 @@ const tree = (arr) => {
       if (child && val == child.data && isLeaf(child))
         deleteLeaf(root, rootSide); //
     } else {
-      // Single child node !!check Boolean deleteOneChildNode(node)
       if (hasOneChild(root)) {
-        // isSingleChild
-        // p=o
         root = deleteOneChildNode(root);
-      } else if (hasTwoChildren(root) && isLeaf(root.right)) {
-        root = deleteTwoChildNode(root);
-        // p=o
-        //}//else if (hasTwoChildren(root) && !isLeaf(root.right)) {
-        //root.data = deleteTwoChildNode(root)
-      } else if (
-        hasTwoChildren(root) &&
-        hasOneChild(root.right) &&
-        !root.right.left
-      ) {
-        // p=o
-        root.data = root.right.data; // sub value
-        root.right = root.right.right; //replace entire rightside
-        // root = root.right // simply overwrite
-        // root = deleteTwoChildNode(root);
-      } else if (hasTwoChildren(root) && hasTwoChildren(root.right)) {
-        // p=o
-        root.data = deleteTwoChildNode(root);
-      } else if (
-        hasTwoChildren(root) &&
-        hasOneChild(root.right) &&
-        root.right.left
-      ) {
-        // p=o
-        root.data = deleteTwoChildNode(root);
+      } else if (hasTwoChildren(root)) {
+        // --- Case 1: right child is a leaf ---
+        if (isLeaf(root.right)) {
+          root = promoteRightLeaf(root);
+
+          // --- Case 2: right child has no left child (simple right promotion) ---
+        } else if (hasOneChild(root.right) && !root.right.left) {
+          root.data = root.right.data;
+          root.right = root.right.right;
+
+          // --- Case 3: all other two-child variations ---
+        } else {
+          root.data = promoteLeftmostFromRight(root);
+        }
       }
     }
+
     return root;
   };
   return { root, insert, del };
