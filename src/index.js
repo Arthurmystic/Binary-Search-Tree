@@ -18,17 +18,12 @@ const tree = (arr) => {
     return arrRoot;
   };
 
-  // const find = (arrRoot, val){
-  //   if (val < arrRoot.data) {
-  //     arrRoot.left = del(val, arrRoot.left);
-  //     rootSide = "left";
-  //   } else if (val > arrRoot.data) {
-  //     arrRoot.right = del(val, arrRoot.right);
-  //     rootSide = "right";
-  //   } else if (val == arrRoot.data) {
-  //     rootSide = null;
-  //   } else console.log("Value not in tree");
-  // }
+  const find = (val, arrRoot = root) => {
+    if (!arrRoot) return null;
+    if (val < arrRoot.data) return find(val, arrRoot.left);
+    if (val > arrRoot.data) return find(val, arrRoot.right);
+    return arrRoot;
+  };
 
   const del = (val, arrRoot = root) => {
     if (!arrRoot) return null;
@@ -94,7 +89,7 @@ const tree = (arr) => {
     }
     return arrRoot;
   };
-  return { root, insert, del };
+  return { root, insert, del, find };
 };
 
 const buildTree = (arr) => {
