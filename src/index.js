@@ -24,18 +24,6 @@ const tree = (arr) => {
     if (val > arrRoot.data) return find(val, arrRoot.right);
     return arrRoot;
   };
-  // simply calls the callback on the node
-
-  // for each node put the staff in a queue :
-  // Queue = []
-  // finalArray = []
-  // pass in root, into traverse.
-  // put root into queue
-  //
-  // check for root.data and push it to finalArray if has a value and remove root from queue
-  // call callBack which
-  // checks if node has left and right . if yes, then push them in the queue, and call traverse again.
-  // if queue is empty, retunr finalarray
 
   function levelOrderForEach(treeRoot = root, callback = callBack) {
     const queue = [treeRoot];
@@ -44,16 +32,18 @@ const tree = (arr) => {
       callback(queue, queue[0], finalArr);
     }
     return finalArr;
+    // return callback(queue, queue[0], finalArr); // recursion version - # out while and return finalArr to use this
   }
 
   function callBack(queue, node, finalArr) {
-    let removedItem;
+    // if (queue.length == 0) return finalArr; // add this and #out IF below if recursion version is to be used
     if (queue.length >= 0) {
-      removedItem = queue.shift();
+      const removedItem = queue.shift();
       finalArr.push(removedItem.data);
     }
     if (node.left) queue.push(node.left);
     if (node.right) queue.push(node.right);
+    // return callBack(queue, queue[0], finalArr); // add this if recursion versiont to be used
   }
 
   const del = (val, arrRoot = root) => {
@@ -168,6 +158,7 @@ myTree2.insert(400);
 myTree2.insert(295);
 myTree2.insert(400);
 myTree2.insert(298);
+myTree2.levelOrderForEach();
 
 // myTree2.del(3)
 // myTree2.del(7)
@@ -189,3 +180,4 @@ myTree2.del(6345);
 myTree2.del(4);
 
 console.log(prettyPrint(myTree2.root));
+myTree2.levelOrderForEach();
