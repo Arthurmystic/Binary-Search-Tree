@@ -24,6 +24,37 @@ const tree = (arr) => {
     if (val > arrRoot.data) return find(val, arrRoot.right);
     return arrRoot;
   };
+  // simply calls the callback on the node
+
+  // for each node put the staff in a queue :
+  // Queue = []
+  // finalArray = []
+  // pass in root, into traverse.
+  // put root into queue
+  //
+  // check for root.data and push it to finalArray if has a value and remove root from queue
+  // call callBack which
+  // checks if node has left and right . if yes, then push them in the queue, and call traverse again.
+  // if queue is empty, retunr finalarray
+
+  function levelOrderForEach(treeRoot = root, callback = callBack) {
+    const queue = [treeRoot];
+    const finalArr = [];
+    while (queue.length > 0) {
+      callback(queue, queue[0], finalArr);
+    }
+    return finalArr;
+  }
+
+  function callBack(queue, node, finalArr) {
+    let removedItem;
+    if (queue.length >= 0) {
+      removedItem = queue.shift();
+      finalArr.push(removedItem.data);
+    }
+    if (node.left) queue.push(node.left);
+    if (node.right) queue.push(node.right);
+  }
 
   const del = (val, arrRoot = root) => {
     if (!arrRoot) return null;
