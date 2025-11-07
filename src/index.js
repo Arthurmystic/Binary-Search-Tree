@@ -25,14 +25,28 @@ const tree = (arr) => {
     return arrRoot;
   };
 
-  function levelOrderForEach(treeRoot = root, callback = callBack) {
-    const queue = [treeRoot];
-    const finalArr = [];
-    while (queue.length > 0) {
-      callback(queue, queue[0], finalArr);
+  function levelOrderForEach(callback, treeRoot = root) {
+    try {
+      if (callback !== "function")
+        throw new Error(
+          "Invalid callback: expected a function but received " +
+            typeof callback +
+            "."
+        );
+
+      const queue = [treeRoot];
+      const finalArr = [];
+      while (queue.length > 0) {
+        callback(queue, queue[0], finalArr);
+      }
+      return finalArr;
+      // return callback(queue, queue[0], finalArr); // recursion version - # out while and return finalArr to use this
+    } catch (e) {
+      // console.error(e)
+      console.log(e.name);
+      console.log(e.message);
+      // console.log(e.stack)
     }
-    return finalArr;
-    // return callback(queue, queue[0], finalArr); // recursion version - # out while and return finalArr to use this
   }
 
   function callBack(queue, node, finalArr) {
@@ -45,6 +59,33 @@ const tree = (arr) => {
     if (node.right) queue.push(node.right);
     // return callBack(queue, queue[0], finalArr); // add this if recursion versiont to be used
   }
+
+  function preOrderForEach(node) {
+    if (!node) return [];
+    return [
+      node.data,
+      ...preOrderForEach(node.left),
+      ...preOrderForEach(node.right),
+    ];
+  } // the spread operator is for flattening the arrays, instead of having nested arrays e.g. [...[1,2], ...[3,4], 5] -> [1,2,3,4,5]
+
+  function inOrderForEach(node) {
+    if (!node) return [];
+    return [
+      ...inOrderForEach(node.left),
+      node.data,
+      ...inOrderForEach(node.right),
+    ];
+  } // the spread operator is for flattening the arrays, instead of having nested arrays e.g. [...[1,2], ...[3,4], 5] -> [1,2,3,4,5]
+
+  function postOrderForEach(node) {
+    if (!node) return [];
+    return [
+      ...postOrderForEach(node.left),
+      ...postOrderForEach(node.right),
+      node.data,
+    ];
+  } // the spread operator is for flattening the arrays, instead of having nested arrays e.g. [...[1,2], ...[3,4], 5] -> [1,2,3,4,5]
 
   const del = (val, arrRoot = root) => {
     if (!arrRoot) return null;
@@ -94,6 +135,7 @@ const tree = (arr) => {
       node.data = leafData; //update node.data
       return node;
     }
+
     function promoteLeftmostFromRight(node) {
       const rightChild = node.right;
       if (!rightChild.left) return rightChild.data; // return data if no left child;
@@ -110,7 +152,15 @@ const tree = (arr) => {
     }
     return arrRoot;
   };
-  return { root, insert, del, find };
+  return {
+    root,
+    insert,
+    del,
+    find,
+    preOrderForEach,
+    inOrderForEach,
+    postOrderForEach,
+  };
 };
 
 const buildTree = (arr) => {
@@ -158,7 +208,10 @@ myTree2.insert(400);
 myTree2.insert(295);
 myTree2.insert(400);
 myTree2.insert(298);
-myTree2.levelOrderForEach();
+myTree2.levelOrderForEach(myTree2.callBack);
+myTree2.preOrderForEach(myTree2.root); //postOrderForEach
+myTree2.postOrderForEach(myTree2.root); //postOrderForEach
+myTree2.inOrderForEach(myTree2.root); //postOrderForEach
 
 // myTree2.del(3)
 // myTree2.del(7)
