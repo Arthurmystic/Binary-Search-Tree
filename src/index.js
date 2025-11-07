@@ -28,6 +28,19 @@ const tree = (arr) => {
     return arrRoot;
   };
 
+  const depth = (val, arrRoot = root) => {
+    if (!arrRoot) return null;
+    if (val < arrRoot.data) {
+      let leftAns = depth(val, arrRoot.left);
+      return leftAns === null ? null : leftAns + 1;
+    }
+    if (val > arrRoot.data) {
+      let rightAns = depth(val, arrRoot.right);
+      return rightAns === null ? null : rightAns + 1;
+    }
+    return 0;
+  };
+
   const height = (val, treeRoot = root) => {
     node = find(val, treeRoot);
     if (!node) return null;
@@ -177,6 +190,7 @@ const tree = (arr) => {
     inOrderForEach,
     postOrderForEach,
     height,
+    depth,
   };
 };
 
@@ -252,3 +266,4 @@ myTree2.del(4);
 console.log(prettyPrint(myTree2.root));
 myTree2.levelOrderForEach();
 myTree2.height(8);
+myTree2.height(298);
