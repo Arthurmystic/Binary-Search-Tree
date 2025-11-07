@@ -11,6 +11,8 @@ const createNode = (data = null, left = null, right = null) => {
 
 const tree = (arr) => {
   let root = buildTree(arr);
+  const isLeaf = (node) => node && !node.left && !node.right;
+
   const insert = (val, arrRoot = root) => {
     if (!arrRoot) return createNode(val);
     if (val < arrRoot.data) arrRoot.left = insert(val, arrRoot.left);
@@ -18,6 +20,7 @@ const tree = (arr) => {
     return arrRoot;
   };
 
+  // returns node with the given value
   const find = (val, arrRoot = root) => {
     if (!arrRoot) return null;
     if (val < arrRoot.data) return find(val, arrRoot.left);
@@ -25,9 +28,22 @@ const tree = (arr) => {
     return arrRoot;
   };
 
+  const height = (val, treeRoot = root) => {
+    node = find(val, treeRoot);
+    if (!node) return null;
+
+    function countHeight(node) {
+      if (!node) return 0;
+      if (isLeaf(node)) return 0;
+      return 1 + Math.max(countHeight(node.left), countHeight(node.right));
+    }
+
+    return countHeight(node);
+  };
+
   function levelOrderForEach(callback, treeRoot = root) {
     try {
-      if (callback !== "function")
+      if (typeof callback !== "function")
         throw new Error(
           "Invalid callback: expected a function but received " +
             typeof callback +
@@ -50,11 +66,10 @@ const tree = (arr) => {
   }
 
   function callBack(queue, node, finalArr) {
-    // if (queue.length == 0) return finalArr; // add this and #out IF below if recursion version is to be used
-    if (queue.length >= 0) {
-      const removedItem = queue.shift();
-      finalArr.push(removedItem.data);
-    }
+    // if (queue.length == 0) return finalArr; // add this and #out the 2 lines below if recursion version is to be used
+    const removedItem = queue.shift();
+    finalArr.push(removedItem.data);
+
     if (node.left) queue.push(node.left);
     if (node.right) queue.push(node.right);
     // return callBack(queue, queue[0], finalArr); // add this if recursion versiont to be used
@@ -91,7 +106,6 @@ const tree = (arr) => {
     if (!arrRoot) return null;
     let rootSide;
 
-    const isLeaf = (node) => node && !node.left && !node.right;
     const hasOneChild = (node) => !!node.left !== !!node.right;
     const hasTwoChildren = (node) => node.left && node.right;
     const deleteOneChildNode = (node) => (node.left ? node.left : node.right); // skip currNode n retirn next left or right node;
@@ -157,9 +171,12 @@ const tree = (arr) => {
     insert,
     del,
     find,
+    levelOrderForEach,
+    callBack,
     preOrderForEach,
     inOrderForEach,
     postOrderForEach,
+    height,
   };
 };
 
@@ -234,3 +251,4 @@ myTree2.del(4);
 
 console.log(prettyPrint(myTree2.root));
 myTree2.levelOrderForEach();
+myTree2.height(8);
