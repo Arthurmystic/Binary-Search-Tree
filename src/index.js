@@ -41,20 +41,44 @@ const tree = (arr) => {
     return 0;
   };
 
-  const height = (val, treeRoot = root) => {
-    node = find(val, treeRoot);
+  function computeHeight(node) {
+    if (!node) return 0;
+    if (isLeaf(node)) return 0;
+    return 1 + Math.max(computeHeight(node.left), computeHeight(node.right));
+  }
+
+  const height = (val, arrRoot = root) => {
+    node = find(val, arrRoot);
     if (!node) return null;
-
-    function countHeight(node) {
-      if (!node) return 0;
-      if (isLeaf(node)) return 0;
-      return 1 + Math.max(countHeight(node.left), countHeight(node.right));
-    }
-
-    return countHeight(node);
+    return computeHeight(node);
   };
 
-  function levelOrderForEach(callback, treeRoot = root) {
+  // const isNodeBalanced = (node) => {
+  //   return Math.abs(computeHeight(node.left) - computeHeight(node.right)) > 1
+  //     ? false
+  //     : true;
+  // };
+
+  const isNodeBalanced = (node) =>
+    Math.abs(computeHeight(node.left) - computeHeight(node.right)) <= 1;
+
+  const isBalanced = (node = root) => {
+    if (!node) return true; // null nodes are balanced;
+
+    if (!isNodeBalanced(node)) return "❌ TREE NOT balanced";
+    else console.log("✅ ROOT is balanced");
+
+    if (!isBalanced(node.right)) return "❌ right subTree NOT balanced";
+    else console.log("✅ right subTree is balanced");
+
+    if (!isBalanced(node.left)) return "❌ left subTree NOT balanced";
+    else console.log("✅ left subTree is balanced");
+    console.log("-----------");
+
+    return "Tree and subtrees are balanced";
+  };
+
+  function levelOrderForEach(callback, arrRoot = root) {
     try {
       if (typeof callback !== "function")
         throw new Error(
@@ -63,7 +87,7 @@ const tree = (arr) => {
             "."
         );
 
-      const queue = [treeRoot];
+      const queue = [arrRoot];
       const finalArr = [];
       while (queue.length > 0) {
         callback(queue, queue[0], finalArr);
@@ -191,6 +215,7 @@ const tree = (arr) => {
     postOrderForEach,
     height,
     depth,
+    isBalanced,
   };
 };
 
