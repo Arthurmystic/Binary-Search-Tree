@@ -11,6 +11,7 @@ const createNode = (data = null, left = null, right = null) => {
 
 const tree = (arr) => {
   let root = buildTree(arr);
+
   const isLeaf = (node) => node && !node.left && !node.right;
 
   const insert = (val, arrRoot = root) => {
@@ -62,21 +63,27 @@ const tree = (arr) => {
   const isNodeBalanced = (node) =>
     Math.abs(computeHeight(node.left) - computeHeight(node.right)) <= 1;
 
-  const isBalanced = (node = root) => {
-    if (!node) return true; // null nodes are balanced;
+  function isBalanced(node = root) {
+    if (!node) return true; //'null';
 
-    if (!isNodeBalanced(node)) return "❌ TREE NOT balanced";
-    else console.log("✅ ROOT is balanced");
+    if (!isNodeBalanced(node)) {
+      console.log("❌ TREE NOT balanced");
+      return false;
+    }
 
-    if (!isBalanced(node.right)) return "❌ right subTree NOT balanced";
-    else console.log("✅ right subTree is balanced");
+    if (!isBalanced(node.right)) {
+      console.log("❌ right subTree NOT balanced");
+      return false;
+    }
 
-    if (!isBalanced(node.left)) return "❌ left subTree NOT balanced";
-    else console.log("✅ left subTree is balanced");
-    console.log("-----------");
+    if (!isBalanced(node.left)) {
+      console.log("❌ left subTree NOT balanced");
+      return false;
+    }
 
-    return "Tree and subtrees are balanced";
-  };
+    console.log("--- ✅ Root and Subtrees are balanced ---");
+    return true;
+  }
 
   function levelOrderForEach(callback, arrRoot = root) {
     try {
@@ -138,6 +145,10 @@ const tree = (arr) => {
       node.data,
     ];
   } // the spread operator is for flattening the arrays, instead of having nested arrays e.g. [...[1,2], ...[3,4], 5] -> [1,2,3,4,5]
+
+  function rebalance() {
+    root = buildTree(preOrderForEach(root)); // using preorder for traversal but can use any of the others
+  }
 
   const del = (val, arrRoot = root) => {
     if (!arrRoot) return null;
@@ -204,7 +215,9 @@ const tree = (arr) => {
     return arrRoot;
   };
   return {
-    root,
+    get root() {
+      return root;
+    }, // using getter so as to use the dynamic/updated value of root externally too
     insert,
     del,
     find,
@@ -216,6 +229,7 @@ const tree = (arr) => {
     height,
     depth,
     isBalanced,
+    rebalance,
   };
 };
 
