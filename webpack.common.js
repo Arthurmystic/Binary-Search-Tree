@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
   entry: {
-    app: "./src/index.js", // UPDATE THIS if diff entry point
+    app: "./src/testScript.js", // UPDATE THIS if diff entry point
   },
 
   output: {
@@ -15,8 +15,8 @@ module.exports = {
 
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./src/index.html", // UPDATE THIS IF HAVE AN HTML to the html file name
-      // title: 'production',  //OR Use this if u want webpack to generate a dynakic htmlfromm scratch
+      // template: "./src/index.html", // UPDATE THIS IF HAVE AN HTML to the html file name
+      title: "production", //OR Use this if u want webpack to generate a dynakic htmlfromm scratch
     }),
   ],
 

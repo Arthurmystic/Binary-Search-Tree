@@ -1,8 +1,3 @@
-import prettyPrint from "./prettyPrint.js";
-
-const arr1 = [500, 10, 20, 30, 100, 40];
-// const arr2 = [500,10,20,30,100]
-const arr2 = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 // index.js
 
 const createNode = (data = null, left = null, right = null) => {
@@ -49,7 +44,7 @@ const tree = (arr) => {
   }
 
   const height = (val, arrRoot = root) => {
-    node = find(val, arrRoot);
+    const node = find(val, arrRoot);
     if (!node) return null;
     return computeHeight(node);
   };
@@ -64,25 +59,13 @@ const tree = (arr) => {
     Math.abs(computeHeight(node.left) - computeHeight(node.right)) <= 1;
 
   function isBalanced(node = root) {
-    if (!node) return true; //'null';
-
+    if (!node) return true; // treat null returns as balanced ;
     if (!isNodeBalanced(node)) {
-      console.log("❌ TREE NOT balanced");
+      console.log("❌ Node NOT balanced");
       return false;
     }
-
-    if (!isBalanced(node.right)) {
-      console.log("❌ right subTree NOT balanced");
-      return false;
-    }
-
-    if (!isBalanced(node.left)) {
-      console.log("❌ left subTree NOT balanced");
-      return false;
-    }
-
-    console.log("--- ✅ Root and Subtrees are balanced ---");
-    return true;
+    const areSubTreesBalanced = isBalanced(node.right) && isBalanced(node.left); // check if left and right subtrees are balanced
+    return areSubTreesBalanced ? true : false;
   }
 
   function levelOrderForEach(callback, arrRoot = root) {
@@ -236,7 +219,7 @@ const tree = (arr) => {
 const buildTree = (arr) => {
   if (arr.length === 0) return null;
   const sortedArr = arr
-    .filter((x, i) => arr.indexOf(x) === i) // const sortedArr = [...new Set(arr)].sort((a,b)=>a-b); new set auto removes dups ... change sit back to array
+    .filter((x, i) => arr.indexOf(x) === i) // const sortedArr = [...new Set(arr)].sort((a,b)=>a-b); new set auto removes dups ... changes it back to array
     .sort((a, b) => a - b);
 
   const mid = Math.floor(sortedArr.length / 2);
@@ -247,62 +230,4 @@ const buildTree = (arr) => {
   return node;
 };
 
-console.log(`  `);
-// const myTree = tree(arr1);
-const myTree2 = tree(arr2);
-console.log(prettyPrint(myTree2.root));
-// console.log(myTree2);
-
-myTree2.insert(67);
-myTree2.insert(34);
-myTree2.insert(90);
-myTree2.insert(36);
-myTree2.insert(30);
-// myTree2.insert(30000);
-
-// myTree2.insert(myTree2.root,7.5)
-
-console.log(prettyPrint(myTree2.root));
-
-// myTree2.del(34)
-// myTree2.del(30)
-// myTree2.del(233)
-myTree2.insert(6);
-myTree2.insert(4.5);
-myTree2.insert(2);
-myTree2.insert(7000);
-myTree2.insert(8000);
-myTree2.insert(9000);
-myTree2.insert(7500);
-myTree2.insert(400);
-myTree2.insert(295);
-myTree2.insert(400);
-myTree2.insert(298);
-myTree2.levelOrderForEach(myTree2.callBack);
-myTree2.preOrderForEach(myTree2.root); //postOrderForEach
-myTree2.postOrderForEach(myTree2.root); //postOrderForEach
-myTree2.inOrderForEach(myTree2.root); //postOrderForEach
-
-// myTree2.del(3)
-// myTree2.del(7)
-// myTree2.del(6)
-// myTree2.del(67);
-// myTree2.del(2333);
-// myTree2.del(90);
-// myTree2.del(324);
-myTree2.del(67);
-// myTree2.del(23);
-// myTree2.del(333);
-// myTree2.del(4);
-myTree2.del(23);
-// myTree2.del(345);
-myTree2.del(8000);
-myTree2.del(7);
-
-myTree2.del(6345);
-myTree2.del(4);
-
-console.log(prettyPrint(myTree2.root));
-myTree2.levelOrderForEach();
-myTree2.height(8);
-myTree2.height(298);
+export { tree };
