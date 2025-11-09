@@ -45,19 +45,6 @@ Any traversal order could be swapped in.
 
 Just execute: node testScript.js
 
-***📌 Example Output Snippets***
-Pretty-printed tree:
-│       ┌── 900
-│   ┌── 67
-└── 23
-    │   ┌── 8
-    └── 7
-
-Traversals:
-Preorder: [23, 7, 3, 8, 67, 34, 90]
-Inorder:  [3, 7, 8, 23, 34, 67, 90]
-Postorder: [...]
-
 Balance check:
 ❌ TREE NOT balanced
 --- Rebalancing ---
